@@ -68,7 +68,6 @@ calculateBtn.addEventListener('click', function() {
 });
 
 function calculateSP(mob, strInitial, strBonus, weapon, potions, doubleSP, isStaff) {
-    function calculateSP(mob, strInitial, strBonus, weapon, potions, doubleSP, isStaff) {
     let strFinal = 0;
     let weaponMulti = 0;
     let expDrop = 0;
@@ -139,7 +138,6 @@ function calculateSP(mob, strInitial, strBonus, weapon, potions, doubleSP, isSta
 
     return { minutes, killCount };
 }
-}
 
 // Helper functions
 function capitalize(str) {
@@ -171,4 +169,3 @@ function formatTime(minutes) {
     }
     return `${minutes} minutes`;
 }
-
