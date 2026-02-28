@@ -1,10 +1,10 @@
 // Game Data
 const gameData = {
     swords: ["fist", "longsword", "claymore", "royal sword", "sandshard", "inferno sword", "icebringer sword", "dragofeng", "emberheart sword"],
-    mobs: ["snail", "pig", "turtle", "caveman", "spider", "mammoth", "viperbloom", "warlock", "spartan", "reaper", "angel", "cowboy", "ghost", "totem sentinel", "mummy", "blightleap", "bonepicker", "oculon", "magmaton", "knobble", "puffcap", "shellthorn", "winxy"],
+    mobs: ["snail", "pig", "turtle", "caveman", "spider", "mammoth", "viperbloom", "warlock", "spartan", "reaper", "angel", "cowboy", "ghost", "totem sentinel", "mummy", "blightleap", "bonepicker", "oculon", "magmaton", "knobble", "puffcap", "winxy", "shellthorn"],
     staffs: ["winterbolt staff", "flame staff", "lightning staff", "aqua staff", "inferno staff", "nature staff", "elixir staff"],
     multiplicatives: ["", "k", "m", "b", "t"],
-    mobHealths: [10, 800, 2778, 4500, 12500, 75000, 125000, 100000, 312000, 833000, 1667000, 16667000, 75000000, 312000000, 714000000, 2778000000, 35714000000, 111000000000, 667000000000, 2000000000000, 15714000000, 1333000000000, 66000000000],
+    mobHealths: [10, 800, 2778, 4500, 12500, 75000, 125000, 100000, 312000, 833000, 1667000, 16667000, 75000000, 312000000, 714000000, 2778000000, 35714000000, 111000000000, 667000000000, 2000000000000, 15714000000000, 66000000000000, 1333000000000000],
     strMultiplicatives: [1, 1000, 1000000, 1000000000, 1000000000000],
     staffMultiplicatives: [0.15, 0.17, 0.2, 0.23, 0.3, 0.35, 2.5],
     swordMultiplicatives: [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 1.2, 0.7],
@@ -56,10 +56,17 @@ calculateBtn.addEventListener('click', function() {
     const mobIndex = gameData.mobs.indexOf(mob);
     const nextMob = mobIndex + 1 < gameData.mobs.length ? gameData.mobs[mobIndex + 1] : "the final boss";
 
-    // Display results
-    resultText.textContent = `To one-shot ${capitalize(nextMob)}, you must kill ${formatNumber(results.killCount)} ${capitalize(mob)}s which will take roughly ${formatTime(results.minutes)}.`;
-    killCountSpan.textContent = formatNumber(results.killCount);
-    timeNeededSpan.textContent = formatNumber(results.minutes);
+    // Display results based on whether they can one-shot current mob
+    if (!results.canOneShotCurrent) {
+        resultText.textContent = `You can't one-shot this mob. Try farming another one first until you have ${formatNumber(results.spNeededForCurrent)} more skill points.`;
+        killCountSpan.textContent = 'N/A';
+        timeNeededSpan.textContent = 'N/A';
+    } else {
+        const spNeededText = formatNumber(results.spNeededForNext);
+        resultText.textContent = `To one-shot ${capitalize(nextMob)} (requires ${spNeededText} SP), you must kill ${formatNumber(results.killCount)} ${capitalize(mob)}s which will take roughly ${formatTime(results.minutes)}.`;
+        killCountSpan.textContent = formatNumber(results.killCount);
+        timeNeededSpan.textContent = formatNumber(results.minutes);
+    }
     
     resultsDiv.classList.remove('hidden');
     
@@ -102,27 +109,65 @@ function calculateSP(mob, strInitial, strBonus, weapon, potions, doubleSP, isSta
 
     // Find mob details
     const mobIndex = gameData.mobs.indexOf(mob);
-    if (mobIndex !== -1) {
-        if (mobIndex + 1 < gameData.mobs.length) {
-            nextMobHealth = gameData.mobHealths[mobIndex + 1];
-        }
-        expDrop = doubleSP ? gameData.expDrops[mobIndex] * 2 : gameData.expDrops[mobIndex];
+    if (mobIndex === -1) {
+        return { canOneShotCurrent: false, spNeededForCurrent: 0 };
     }
+
+    // Check if player can one-shot the CURRENT mob
+    const currentMobHealth = gameData.mobHealths[mobIndex];
+    const currentDamage = strFinal * weaponMulti;
+    
+    if (currentDamage < currentMobHealth) {
+        // Cannot one-shot current mob
+        const spNeeded = Math.ceil((currentMobHealth / weaponMulti) - strFinal);
+        return { 
+            canOneShotCurrent: false,
+            spNeededForCurrent: spNeeded
+        };
+    }
+
+    // Player can one-shot current mob, now calculate for NEXT mob
+    if (mobIndex + 1 >= gameData.mobs.length) {
+        // Already at final mob
+        return { 
+            canOneShotCurrent: true,
+            minutes: 0,
+            killCount: 0,
+            spNeededForNext: 0
+        };
+    }
+
+    nextMobHealth = gameData.mobHealths[mobIndex + 1];
+    expDrop = doubleSP ? gameData.expDrops[mobIndex] * 2 : gameData.expDrops[mobIndex];
+    
+    // Calculate SP needed for next mob
+    const targetStr = nextMobHealth / weaponMulti;
+    const spNeededForNext = Math.ceil(targetStr);
 
     // Calculate kills and time needed
     const baseExpPerMinute = expDrop * KPM;
 
     // Safety check
     if (baseExpPerMinute <= 0 || weaponMulti <= 0) {
-        return { minutes: 0, killCount: 0 };
+        return { 
+            canOneShotCurrent: true,
+            minutes: 0, 
+            killCount: 0,
+            spNeededForNext: spNeededForNext
+        };
     }
 
     // Calculate using math instead of loop
-    const targetStr = nextMobHealth / weaponMulti;
     const strNeeded = targetStr - strFinal;
 
     if (strNeeded <= 0) {
-        return { minutes: 0, killCount: 0 };
+        // Already can one-shot next mob
+        return { 
+            canOneShotCurrent: true,
+            minutes: 0, 
+            killCount: 0,
+            spNeededForNext: spNeededForNext
+        };
     }
 
     // Calculate with potions first (2x exp)
@@ -136,7 +181,12 @@ function calculateSP(mob, strInitial, strBonus, weapon, potions, doubleSP, isSta
     minutes = potionMinutesUsed + normalMinutes;
     killCount = minutes * KPM;
 
-    return { minutes, killCount };
+    return { 
+        canOneShotCurrent: true,
+        minutes, 
+        killCount,
+        spNeededForNext: spNeededForNext
+    };
 }
 
 // Helper functions
