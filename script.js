@@ -8,7 +8,7 @@ const gameData = {
     strMultiplicatives: [1, 1000, 1000000, 1000000000, 1000000000000],
     staffMultiplicatives: [0.15, 0.17, 0.2, 0.23, 0.3, 0.35, 2.5],
     swordMultiplicatives: [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 1.2, 0.7],
-    expDrops: [10, 40, 100, 250, 400, 1000, 1750, 3250, 5500, 14000, 30000, 50000, 110000, 250000, 500000, 750000, 1500000, 3250000, 7000000, 2000, 2100, 2200, 2300]
+    expDrops: [10, 40, 100, 250, 400, 1000, 1750, 3250, 5500, 14000, 30000, 50000, 110000, 250000, 500000, 750000, 1500000, 3250000, 7000000, 12000000, 24000000, 100000000, 50000000]
 };
 
 // DOM Elements
@@ -36,7 +36,7 @@ weaponSelect.addEventListener('change', function() {
 calculateBtn.addEventListener('click', function() {
     // Get input values
     const mob = mobSelect.value;
-    const strInitial = parseInt(strengthInput.value) || 0;
+    const strInitial = parseFloat(strengthInput.value) || 0;
     const strBonus = multiplierSelect.value;
     const weapon = weaponSelect.value;
     const potions = parseInt(potionsInput.value) || 0;
@@ -118,7 +118,7 @@ function calculateSP(mob, strInitial, strBonus, weapon, potions, doubleSP, isSta
     }
 
     // Maximum iterations to prevent browser freeze
-    const maxIterations = 1000000;
+    const maxIterations = 50000000;
     let iterations = 0;
 
     while (strFinal * weaponMulti < nextMobHealth && iterations < maxIterations) {
