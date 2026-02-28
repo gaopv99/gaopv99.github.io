@@ -4,11 +4,20 @@ const gameData = {
     mobs: ["snail", "pig", "turtle", "caveman", "spider", "mammoth", "viperbloom", "warlock", "spartan", "reaper", "angel", "cowboy", "ghost", "totem sentinel", "mummy", "blightleap", "bonepicker", "oculon", "magmaton", "knobble", "puffcap", "winxy", "shellthorn"],
     staffs: ["winterbolt staff", "flame staff", "lightning staff", "aqua staff", "inferno staff", "nature staff", "elixir staff"],
     multiplicatives: ["", "k", "m", "b", "t"],
-    mobHealths: [10, 800, 2778, 4500, 12500, 75000, 125000, 100000, 312000, 833000, 1667000, 16667000, 75000000, 312000000, 714000000, 2778000000, 35714000000, 111000000000, 667000000000, 2000000000000, 15714000000000, 66000000000000, 1333000000000000],
+    // CORRECTED: All values as actual numbers
+    mobHealths: [
+        10, 800, 2500, 4500, 12500, 75000, 125000, 100000, 
+        250000, 750000, 1500000, 15000000, 60000000, 
+        250000000, 500000000, 2500000000, 25000000000, 
+        100000000000, 600000000000, 1800000000000, 
+        11000000000000, 66000000000000, 400000000000000
+    ],
+    mobPhysicalResistances: [0, 0, 10, 0, 0, 20, 0, 0, 20, 10, 10, 10, 20, 20, 30, 10, 30, 10, 10, 10, 30, 0, 70],
+    mobMagicResistances: [0, 0, 0, 0, 10, 10, 0, 20, 0, 20, 25, 0, 60, 20, 10, 30, 30, 70, 20, 25, 30, 70, 10],
     strMultiplicatives: [1, 1000, 1000000, 1000000000, 1000000000000],
     staffMultiplicatives: [0.15, 0.17, 0.2, 0.23, 0.3, 0.35, 2.5],
     swordMultiplicatives: [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 1.2, 0.7],
-    expDrops: [10, 40, 100, 250, 400, 1000, 1750, 3250, 5500, 14000, 30000, 50000, 110000, 250000, 500000, 750000, 1500000, 3250000, 7000000, 12000000, 24000000, 100000000, 50000000]
+    expDrops: [10, 40, 100, 250, 400, 1000, 1750, 3250, 5500, 14000, 30000, 50000, 110000, 250000, 500000, 750000, 1500000, 3250000, 7000000, 12000000, 24000000, 50000000, 100000000]
 };
 
 // DOM Elements
@@ -113,13 +122,19 @@ function calculateSP(mob, strInitial, strBonus, weapon, potions, doubleSP, isSta
         return { canOneShotCurrent: false, spNeededForCurrent: 0 };
     }
 
+    // Get mob resistances
+    const physicalResist = gameData.mobPhysicalResistances[mobIndex] / 100;
+    const magicResist = gameData.mobMagicResistances[mobIndex] / 100;
+    const resistance = isStaff ? magicResist : physicalResist;
+
     // Check if player can one-shot the CURRENT mob
     const currentMobHealth = gameData.mobHealths[mobIndex];
-    const currentDamage = strFinal * weaponMulti;
+    const currentDamage = strFinal * weaponMulti * (1 - resistance);
     
     if (currentDamage < currentMobHealth) {
         // Cannot one-shot current mob
-        const spNeeded = Math.ceil((currentMobHealth / weaponMulti) - strFinal);
+        const effectiveWeaponMulti = weaponMulti * (1 - resistance);
+        const spNeeded = Math.ceil((currentMobHealth / effectiveWeaponMulti) - strFinal);
         return { 
             canOneShotCurrent: false,
             spNeededForCurrent: spNeeded
@@ -140,8 +155,14 @@ function calculateSP(mob, strInitial, strBonus, weapon, potions, doubleSP, isSta
     nextMobHealth = gameData.mobHealths[mobIndex + 1];
     expDrop = doubleSP ? gameData.expDrops[mobIndex] * 2 : gameData.expDrops[mobIndex];
     
+    // Get next mob resistances
+    const nextPhysicalResist = gameData.mobPhysicalResistances[mobIndex + 1] / 100;
+    const nextMagicResist = gameData.mobMagicResistances[mobIndex + 1] / 100;
+    const nextResistance = isStaff ? nextMagicResist : nextPhysicalResist;
+    
     // Calculate SP needed for next mob
-    const targetStr = nextMobHealth / weaponMulti;
+    const effectiveWeaponMultiNext = weaponMulti * (1 - nextResistance);
+    const targetStr = nextMobHealth / effectiveWeaponMultiNext;
     const spNeededForNext = Math.ceil(targetStr);
 
     // Calculate kills and time needed
