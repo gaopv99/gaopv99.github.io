@@ -68,6 +68,7 @@ calculateBtn.addEventListener('click', function() {
 });
 
 function calculateSP(mob, strInitial, strBonus, weapon, potions, doubleSP, isStaff) {
+    function calculateSP(mob, strInitial, strBonus, weapon, potions, doubleSP, isStaff) {
     let strFinal = 0;
     let weaponMulti = 0;
     let expDrop = 0;
@@ -75,7 +76,7 @@ function calculateSP(mob, strInitial, strBonus, weapon, potions, doubleSP, isSta
     let KPM = 0;
     let minutes = 0;
     let killCount = 0;
-    let potionMinutesLeft = potions * 30; // each potion = 30 mins of 2x exp
+    let potionMinutesLeft = potions * 30;
 
     // Find str bonus multiplier
     const multIndex = gameData.multiplicatives.indexOf(strBonus);
@@ -112,29 +113,32 @@ function calculateSP(mob, strInitial, strBonus, weapon, potions, doubleSP, isSta
     // Calculate kills and time needed
     const baseExpPerMinute = expDrop * KPM;
 
-    // Safety check to prevent infinite loop
+    // Safety check
     if (baseExpPerMinute <= 0 || weaponMulti <= 0) {
         return { minutes: 0, killCount: 0 };
     }
 
-    // Maximum iterations to prevent browser freeze
-    const maxIterations = 50000000;
-    let iterations = 0;
+    // Calculate using math instead of loop
+    const targetStr = nextMobHealth / weaponMulti;
+    const strNeeded = targetStr - strFinal;
 
-    while (strFinal * weaponMulti < nextMobHealth && iterations < maxIterations) {
-        if (potionMinutesLeft > 0) {
-            // Potion active: 2x exp stacks on top of gamepass
-            strFinal += baseExpPerMinute * 2;
-            potionMinutesLeft--;
-        } else {
-            strFinal += baseExpPerMinute;
-        }
-        killCount += KPM;
-        minutes++;
-        iterations++;
+    if (strNeeded <= 0) {
+        return { minutes: 0, killCount: 0 };
     }
 
+    // Calculate with potions first (2x exp)
+    const potionExp = Math.min(potionMinutesLeft * baseExpPerMinute * 2, strNeeded);
+    const potionMinutesUsed = Math.ceil(potionExp / (baseExpPerMinute * 2));
+    const remaining = strNeeded - potionExp;
+
+    // Then normal exp
+    const normalMinutes = remaining > 0 ? Math.ceil(remaining / baseExpPerMinute) : 0;
+
+    minutes = potionMinutesUsed + normalMinutes;
+    killCount = minutes * KPM;
+
     return { minutes, killCount };
+}
 }
 
 // Helper functions
@@ -167,3 +171,4 @@ function formatTime(minutes) {
     }
     return `${minutes} minutes`;
 }
+
