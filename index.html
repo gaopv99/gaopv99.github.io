@@ -8,130 +8,223 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <!-- Header -->
-            <div class="header">
-                <h1>⚔️ SP Calculator</h1>
-                <p class="subtitle">by gas</p>
-            </div>
+    <div class="layout">
+        <!-- Left Panel - Boss One-Shot -->
+        <div class="side-panel">
+            <div class="card">
+                <div class="header">
+                    <h1>👹 Boss One-Shot</h1>
+                    <p class="subtitle">SP needed to one-shot a boss</p>
+                </div>
 
-            <!-- Form -->
-            <div class="form-group">
-                <label for="mob">Which mob you're on:</label>
-                <select id="mob">
-                    <option value="snail">Snail</option>
-                    <option value="pig">Pig</option>
-                    <option value="turtle">Turtle</option>
-                    <option value="caveman">Caveman</option>
-                    <option value="spider">Spider</option>
-                    <option value="mammoth">Mammoth</option>
-                    <option value="viperbloom">Viperbloom</option>
-                    <option value="warlock">Warlock</option>
-                    <option value="spartan">Spartan</option>
-                    <option value="reaper">Reaper</option>
-                    <option value="angel">Angel</option>
-                    <option value="cowboy">Cowboy</option>
-                    <option value="ghost">Ghost</option>
-                    <option value="totem sentinel">Totem Sentinel</option>
-                    <option value="mummy">Mummy</option>
-                    <option value="blightleap">Blightleap</option>
-                    <option value="bonepicker">Bonepicker</option>
-                    <option value="oculon">Oculon</option>
-                    <option value="magmaton">Magmaton</option>
-                    <option value="knobble">Knobble</option>
-                    <option value="puffcap">Puffcap</option>
-                    <option value="winxy">Winxy</option>
-                    <option value="shellthorn">Shellthorn</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="strength">Current points in strength/magic:</label>
-                <div class="input-row">
-                    <input type="number" id="strength" placeholder="e.g. 500">
-                    <select id="multiplier">
-                        <option value="">-</option>
-                        <option value="k">K</option>
-                        <option value="m">M</option>
-                        <option value="b">B</option>
-                        <option value="t">T</option>
+                <div class="form-group">
+                    <label for="boss">Select Boss:</label>
+                    <select id="boss">
+                        <!-- Fill with your boss options -->
+                        <option value="0">Boss 1</option>
+                        <option value="1">Boss 2</option>
+                        <option value="2">Boss 3</option>
                     </select>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label for="weapon">Which weapon you're using:</label>
-                <select id="weapon">
-                    <optgroup label="Swords">
-                        <option value="fist">Fist</option>
-                        <option value="longsword">Longsword</option>
-                        <option value="claymore">Claymore</option>
-                        <option value="royal sword">Royal Sword</option>
-                        <option value="sandshard">Sandshard</option>
-                        <option value="inferno sword">Inferno Sword</option>
-                        <option value="icebringer sword">Icebringer Sword</option>
-                        <option value="dragofeng">Dragofeng</option>
-                        <option value="emberheart sword">Emberheart Sword</option>
-                    </optgroup>
-                    <optgroup label="Staffs">
-                        <option value="winterbolt staff">Winterbolt Staff</option>
-                        <option value="flame staff">Flame Staff</option>
-                        <option value="lightning staff">Lightning Staff</option>
-                        <option value="aqua staff">Aqua Staff</option>
-                        <option value="inferno staff">Inferno Staff</option>
-                        <option value="nature staff">Nature Staff</option>
-                        <option value="elixir staff">Elixir Staff</option>
-                    </optgroup>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label for="bossWeapon">Which weapon you're using:</label>
+                    <select id="bossWeapon">
+                        <optgroup label="Swords">
+                            <option value="fist">Fist</option>
+                            <option value="longsword">Longsword</option>
+                            <option value="claymore">Claymore</option>
+                            <option value="royal sword">Royal Sword</option>
+                            <option value="sandshard">Sandshard</option>
+                            <option value="inferno sword">Inferno Sword</option>
+                            <option value="icebringer sword">Icebringer Sword</option>
+                            <option value="dragofeng">Dragofeng</option>
+                            <option value="emberheart sword">Emberheart Sword</option>
+                        </optgroup>
+                        <optgroup label="Staffs">
+                            <option value="winterbolt staff">Winterbolt Staff</option>
+                            <option value="flame staff">Flame Staff</option>
+                            <option value="lightning staff">Lightning Staff</option>
+                            <option value="aqua staff">Aqua Staff</option>
+                            <option value="inferno staff">Inferno Staff</option>
+                            <option value="nature staff">Nature Staff</option>
+                            <option value="elixir staff">Elixir Staff</option>
+                        </optgroup>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="potions">How many potions you have:</label>
-                <input type="number" id="potions" placeholder="e.g. 5" value="0">
-            </div>
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="bossIsStaff">
+                        <span class="checkmark"></span>
+                        Using Staff?
+                    </label>
+                </div>
 
-            <div class="checkbox-group">
-                <label class="checkbox-label">
-                    <input type="checkbox" id="doubleSP">
-                    <span class="checkmark"></span>
-                    2x SP Gamepass
-                </label>
+                <button id="bossCalcBtn" class="calculate-btn boss-btn">
+                    💀 Check One-Shot
+                </button>
 
-                <label class="checkbox-label">
-                    <input type="checkbox" id="isStaff">
-                    <span class="checkmark"></span>
-                    Using Staff?
-                </label>
-            </div>
-
-            <button id="calculateBtn" class="calculate-btn">
-                🔥 Calculate
-            </button>
-
-            <!-- Results -->
-            <div id="results" class="results hidden">
-                <h3>📊 Results</h3>
-                <p id="resultText"></p>
-                <div class="stats">
-                    <div class="stat-box">
-                        <span class="stat-value" id="killCount">0</span>
-                        <span class="stat-label">Total Kills</span>
+                <div id="bossResults" class="results hidden">
+                    <h3>🎯 One-Shot Requirements</h3>
+                    <div class="boss-info-card">
+                        <div class="boss-name" id="bossDisplayName">-</div>
+                        <div class="boss-hp-bar">
+                            <div class="hp-fill" id="bossHpFill"></div>
+                            <span class="hp-text" id="bossHpText">0 HP</span>
+                        </div>
                     </div>
-                    <div class="stat-box">
-                        <span class="stat-value" id="timeNeeded">0</span>
-                        <span class="stat-label">Minutes</span>
+                    <div class="stats">
+                        <div class="stat-box boss-stat">
+                            <span class="stat-value" id="spNeeded">0</span>
+                            <span class="stat-label">SP Needed</span>
+                        </div>
+                        <div class="stat-box boss-stat">
+                            <span class="stat-value" id="bossWeaponMulti">0x</span>
+                            <span class="stat-label">Weapon Multiplier</span>
+                        </div>
                     </div>
+                    <div class="boss-extra-stats">
+                        <div class="stat-row">
+                            <span class="stat-row-label">🛡️ Physical Resist</span>
+                            <span class="stat-row-value" id="bossPhysRes">0%</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-row-label">✨ Magic Resist</span>
+                            <span class="stat-row-value" id="bossMagRes">0%</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-row-label">⚔️ Effective Multiplier</span>
+                            <span class="stat-row-value" id="bossEffMulti">0x</span>
+                        </div>
+                    </div>
+                    <p class="boss-tip" id="bossTip"></p>
                 </div>
             </div>
         </div>
 
-        <footer>
-            <p>Made with ❤️ for grinding</p>
-        </footer>
+        <!-- Main Panel - SP Calculator -->
+        <div class="main-panel">
+            <div class="card">
+                <div class="header">
+                    <h1>⚔️ SP Calculator</h1>
+                    <p class="subtitle">by gas</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="mob">Which mob you're on:</label>
+                    <select id="mob">
+                        <option value="snail">Snail</option>
+                        <option value="pig">Pig</option>
+                        <option value="turtle">Turtle</option>
+                        <option value="caveman">Caveman</option>
+                        <option value="spider">Spider</option>
+                        <option value="mammoth">Mammoth</option>
+                        <option value="viperbloom">Viperbloom</option>
+                        <option value="warlock">Warlock</option>
+                        <option value="spartan">Spartan</option>
+                        <option value="reaper">Reaper</option>
+                        <option value="angel">Angel</option>
+                        <option value="cowboy">Cowboy</option>
+                        <option value="ghost">Ghost</option>
+                        <option value="totem sentinel">Totem Sentinel</option>
+                        <option value="mummy">Mummy</option>
+                        <option value="blightleap">Blightleap</option>
+                        <option value="bonepicker">Bonepicker</option>
+                        <option value="oculon">Oculon</option>
+                        <option value="magmaton">Magmaton</option>
+                        <option value="knobble">Knobble</option>
+                        <option value="puffcap">Puffcap</option>
+                        <option value="winxy">Winxy</option>
+                        <option value="shellthorn">Shellthorn</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="strength">Current points in strength/magic:</label>
+                    <div class="input-row">
+                        <input type="number" id="strength" placeholder="e.g. 500">
+                        <select id="multiplier">
+                            <option value="">-</option>
+                            <option value="k">K</option>
+                            <option value="m">M</option>
+                            <option value="b">B</option>
+                            <option value="t">T</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="weapon">Which weapon you're using:</label>
+                    <select id="weapon">
+                        <optgroup label="Swords">
+                            <option value="fist">Fist</option>
+                            <option value="longsword">Longsword</option>
+                            <option value="claymore">Claymore</option>
+                            <option value="royal sword">Royal Sword</option>
+                            <option value="sandshard">Sandshard</option>
+                            <option value="inferno sword">Inferno Sword</option>
+                            <option value="icebringer sword">Icebringer Sword</option>
+                            <option value="dragofeng">Dragofeng</option>
+                            <option value="emberheart sword">Emberheart Sword</option>
+                        </optgroup>
+                        <optgroup label="Staffs">
+                            <option value="winterbolt staff">Winterbolt Staff</option>
+                            <option value="flame staff">Flame Staff</option>
+                            <option value="lightning staff">Lightning Staff</option>
+                            <option value="aqua staff">Aqua Staff</option>
+                            <option value="inferno staff">Inferno Staff</option>
+                            <option value="nature staff">Nature Staff</option>
+                            <option value="elixir staff">Elixir Staff</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="potions">How many potions you have:</label>
+                    <input type="number" id="potions" placeholder="e.g. 5" value="0">
+                </div>
+
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="doubleSP">
+                        <span class="checkmark"></span>
+                        2x SP Gamepass
+                    </label>
+
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="isStaff">
+                        <span class="checkmark"></span>
+                        Using Staff?
+                    </label>
+                </div>
+
+                <button id="calculateBtn" class="calculate-btn">
+                    🔥 Calculate
+                </button>
+
+                <div id="results" class="results hidden">
+                    <h3>📊 Results</h3>
+                    <p id="resultText"></p>
+                    <div class="stats">
+                        <div class="stat-box">
+                            <span class="stat-value" id="killCount">0</span>
+                            <span class="stat-label">Total Kills</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-value" id="timeNeeded">0</span>
+                            <span class="stat-label">Minutes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <footer>
+        <p>Made by gas with ❤️</p>
+    </footer>
 
     <script src="script.js"></script>
 </body>
-
 </html>
