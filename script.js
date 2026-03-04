@@ -240,3 +240,79 @@ function formatTime(minutes) {
     }
     return `${minutes} minutes`;
 }
+
+// ==================== BOSS ONE-SHOT CALCULATOR ====================
+
+// --- TEMPLATE: Fill in your boss data here ---
+const bossData = [
+    // { name: "Boss Name", hp: 12345, physRes: 10, magRes: 20 },
+    { name: "Boss 1", hp: 50000, physRes: 0, magRes: 0 },
+    { name: "Boss 2", hp: 500000, physRes: 10, magRes: 20 },
+    { name: "Boss 3", hp: 5000000, physRes: 20, magRes: 10 },
+    // Add more bosses...
+];
+
+// DOM Elements - Boss Panel
+const bossSelect = document.getElementById('boss');
+const bossWeaponSelect = document.getElementById('bossWeapon');
+const bossIsStaffCheckbox = document.getElementById('bossIsStaff');
+const bossCalcBtn = document.getElementById('bossCalcBtn');
+const bossResultsDiv = document.getElementById('bossResults');
+
+// Auto-detect staff for boss weapon
+bossWeaponSelect.addEventListener('change', function () {
+    const weapon = this.value;
+    bossIsStaffCheckbox.checked = gameData.staffs.includes(weapon);
+});
+
+// Boss calculate
+bossCalcBtn.addEventListener('click', function () {
+    const bossIndex = parseInt(bossSelect.value);
+    const boss = bossData[bossIndex];
+    if (!boss) return;
+
+    const weapon = bossWeaponSelect.value;
+    const isStaff = bossIsStaffCheckbox.checked;
+
+    // Get weapon multiplier
+    let weaponMulti = 0;
+    if (isStaff) {
+        const staffIndex = gameData.staffs.indexOf(weapon);
+        if (staffIndex !== -1) weaponMulti = gameData.staffMultiplicatives[staffIndex];
+    } else {
+        const swordIndex = gameData.swords.indexOf(weapon);
+        if (swordIndex !== -1) weaponMulti = gameData.swordMultiplicatives[swordIndex];
+    }
+
+    // Get resistance
+    const resistance = isStaff ? (boss.magRes / 100) : (boss.physRes / 100);
+    const effectiveMulti = weaponMulti * (1 - resistance);
+
+    // SP needed = HP / effectiveMulti
+    const spNeeded = effectiveMulti > 0 ? Math.ceil(boss.hp / effectiveMulti) : Infinity;
+
+    // Update UI
+    bossResultsDiv.classList.remove('hidden');
+
+    document.getElementById('bossDisplayName').textContent = boss.name;
+    document.getElementById('bossHpText').textContent = formatNumber(boss.hp) + ' HP';
+    document.getElementById('bossHpFill').style.width = '100%';
+
+    document.getElementById('spNeeded').textContent = spNeeded === Infinity ? '∞' : formatNumber(spNeeded);
+    document.getElementById('bossWeaponMulti').textContent = weaponMulti.toFixed(2) + 'x';
+
+    document.getElementById('bossPhysRes').textContent = boss.physRes + '%';
+    document.getElementById('bossMagRes').textContent = boss.magRes + '%';
+    document.getElementById('bossEffMulti').textContent = effectiveMulti > 0 ? effectiveMulti.toFixed(4) + 'x' : '0x';
+
+    // Tip
+    const tipEl = document.getElementById('bossTip');
+    if (effectiveMulti <= 0) {
+        tipEl.textContent = `⚠️ This boss has 100% resistance to your damage type. Try switching to a ${isStaff ? 'sword' : 'staff'}!`;
+    } else {
+        tipEl.textContent = `💡 You need ${formatNumber(spNeeded)} ${isStaff ? 'magic' : 'strength'} points with ${capitalize(weapon)} to one-shot ${boss.name}.`;
+    }
+
+    bossResultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+
